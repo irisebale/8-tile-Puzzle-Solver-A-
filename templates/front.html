@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>8-Tile Puzzle Solver-A*</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="../static/style.css">
+
+	<script type="text/javascript">
+
+
+		let boxes = ['b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8'];
+		let n = [];
+
+	function begin(initial, moves) {
+
+			var i;
+				for (i = 0; i < boxes.length; i++) {
+					var box_id = "b" + i.toString();
+
+					if (initial[i] != '0') {
+						var box = document.getElementById(box_id);
+						box.classList.remove('blank');
+						box.firstChild.data = initial[i];
+					}
+					else {
+						var box = document.getElementById(box_id);
+						box.classList.add('blank');
+						box.firstChild.data = " ";
+					}
+				}
+				for (i = 0; i < moves.length; i++) {
+					n.push(moves[i]);
+				}
+
+				b = setInterval(function() {move();}, 500);
+				if (n.length == 0) {
+					clearInterval(b);
+				}
+		}
+		
+	function get_blank() {
+		for (i = 0; i < boxes.length; i++) {
+			if (document.getElementById(boxes[i]).firstChild.data == " ") {
+				return (boxes[i]);
+			}
+		}
+	}
+
+	function swap(blank_id, box_id) {
+			
+			box_id = "b" + box_id.toString();
+			var box = document.getElementById(box_id);
+			var blank = document.getElementById(blank_id);
+			blank.firstChild.data = box.firstChild.data;
+			blank.classList.remove('blank');
+			box.firstChild.data = " ";
+			box.classList.add('blank');
+		}
+
+
+	function solve() {
+			
+			var pos = get_blank();
+			var pos_int = parseInt(pos.charAt(1));
+				if (n[0] == 'up') {
+					pos_int = pos_int - 3;
+					swap(pos, pos_int);
+				}
+				else if (n[0] == 'down') {
+					pos_int = pos_int + 3;
+					swap(pos, pos_int);
+				}
+				else if (n[0] == 'left') {
+					pos_int = pos_int - 1;
+					swap(pos, pos_int);
+				}
+				else {
+				pos_int = pos_int + 1;
+				swap(pos, pos_int);
+			}
+		}
+		
+	function move() {
+			if (n.length > 0) {
+				solve(n);
+				n.shift();
+			}
+		}
+
+	function sleep(milliseconds) {
+	  var start = new Date().getTime();
+	  for (var i = 0; i < 1e7; i++) {
+	    if ((new Date().getTime() - start) > milliseconds){
+	      break;
+	    }
+	  }
+	}
+
+
+</script>
+
+</head>
+	<body style="background-repeat: no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; background-image: url('../static/img.jpg')">
+		<p style="margin-left:350px; font-family: 'calibri','serif'; font-size:70px; margin-top:80px; color:white;">8-TILE PUZZLE SOLVER using A*</p>
+		<div class="container" id="8tiles" style="padding; margin-top: 40px; margin-left: 380px; margin-bottom: 0px;">
+			<button id="b0" class="btn btn-default box blank"> </button>
+			<button id="b1" class="btn btn-default box">1</button>
+			<button id="b2" class="btn btn-default box">2</button>
+			<br/>
+			<button id="b3" class="btn btn-default box">3</button>
+			<button id="b4" class="btn btn-default box">4</button>
+			<button id="b5" class="btn btn-default box">5</button>
+			<br/>
+			<button id="b6" class="btn btn-default box">6</button>
+			<button id="b7" class="btn btn-default box">7</button>
+			<button id="b8" class="btn btn-default box">8</button>
+		</div>
+		<br/>
+	
+		<button id="new" onclick="begin({{ initial | safe }}, {{ moves | safe }})" class="btn btn-default" style="margin-left: 500px; margin-right: 100px;">Solve</button>
+		<button id="new" onclick="location.reload()" class="btn btn-default">Try Again</button>
+
+		<p style="margin-left:290px; margin-top:20px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">A* Shortest Path: {{ moves }}.</span></p>
+		<p style="margin-left:290px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">A* Runtime: {{ sec_astar }} seconds</span></p>
+		<p style="margin-left:290px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">A* Number of Explored Nodes: {{ main }}</span></p>
+		<p style="margin-left:290px; margin-top:3px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">BFS Shortest Path: {{ moves2 }}.</span></p>
+		<p style="margin-left:290px; margin-top:3px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">BFS Runtime: {{ sec_bfs }} seconds</span></p>
+		<p style="margin-left:290px; font-family: 'calibri','serif'; color: white;"><span style="background-color: #146F87;">BFS Number of Explored Nodes: {{ bfs }}</span></p>
+</body>
+
+</html>
